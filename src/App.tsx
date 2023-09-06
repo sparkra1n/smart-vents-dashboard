@@ -1,33 +1,64 @@
-import React, { useEffect, useState } from "react";
+import { createTheme, useTheme, ThemeProvider, ThemeOptions } from "@mui/material/styles";
+import LeftNavBar from "./pages/LeftNavBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 import Dashboard from "./pages/Dashboard";
 import Rooms from "./pages/Rooms";
-import History from "./pages/History";
+import Graph from "./pages/Graph";
 
-interface IAppProps {}
+const themeOptions = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#7F71CA"
+    },
+    secondary: {
+      main: "#CA373E"
+    },
+    background: {
+      default: "#171A1F",
+      paper: "#171A1F"
+    }
+  }
+});
 
-interface IVentData {}
+const queryString = "a";
 
-function App(props: IAppProps) {
-  const [ventData, setVentData] = useState<IVentData>();
-
-  useEffect(() => {
-    fetchVentData().then((ventData) => setVentData(ventData));
-  }, [props]);
-
-  console.log(ventData); 
-
-  return (
-    <>
-      <Dashboard />
-      <Rooms />
-      <History />
-    </>
+// Create a function to make the GET request
+const fetchVentHistory = async (): Promise<any> => {
+  const response = await fetch(
+    `http://smart-vents-api.azurewebsites.net/Thermostat/VentHistory?id=${encodeURIComponent(
+      queryString
+    )}`
   );
-}
 
-export const fetchVentData = async () => {
-  const data = await fetch("http://smart-vents-api.azurewebsites.net/Thermostat/VentData");
-  return await data.json();
+  if (!response.ok) throw new Error(`Request failed with status: ${response.status}`);
+  const data = await response.json();
+  return data;
+};
+
+fetchVentHistory()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+  });
+
+const App = () => {
+  return (
+    <ThemeProvider theme={themeOptions}>
+      <Box sx={{ display: "flex" }}>
+        <LeftNavBar />
+        <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
+          <Toolbar />
+          <Dashboard />
+          <Rooms />
+          <Graph />
+        </Box>
+      </Box>
+    </ThemeProvider>
+  );
 };
 
 export default App;
