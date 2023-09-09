@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -17,19 +17,51 @@ import { ValueType, NameType } from "recharts/types/component/DefaultTooltipCont
 import { format, parseISO, subDays } from "date-fns";
 import { Card, CardContent, Typography } from "@mui/material";
 
-interface d {
-  date: string;
-  value: number;
+interface VentData {
+  timestamp: string;
+  temp: number;
 }
 
+const fetchVentHistory = async (queryString: string): Promise<any> => {
+  const response = await fetch(
+    `http://smart-vents-api.azurewebsites.net/Thermostat/VentHistory?id=${encodeURIComponent(
+      queryString
+    )}`
+  );
+  const data = await response.json();
+  return data;
+};
+
 const Graph = () => {
-  const data: d[] = [];
-  for (let num = 30; num >= 0; --num) {
-    data.push({
-      date: subDays(new Date(), num).toISOString().substr(0, 10),
-      value: 1 + Math.random()
+  const [ventData, setVentData] = useState<VentData[]>([]);
+
+  useEffect(() => {
+    fetchVentHistory("a").then((response: VentData[]) => {
+      let ventDatas: VentData[] = [];
+      response.forEach((e: VentData) => {
+        const utcDate: Date = new Date(e.timestamp);
+        const targetTimeZone: string = "America/Los_Angeles";
+        const localTime: Date = new Date(
+          utcDate.toLocaleString("en-US", { timeZone: targetTimeZone })
+        );
+
+        // Format the local time as "MM/dd HH:mm" string
+        ventDatas.push({
+          temp: e.temp,
+          timestamp: localTime.toLocaleString("en-US", {
+            timeZone: targetTimeZone,
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        });
+      });
+      setVentData(ventDatas);
     });
-  }
+  }, []);
+
+  console.log("final", ventData);
 
   return (
     <>
@@ -48,7 +80,7 @@ const Graph = () => {
           </Typography>
         </CardContent>
         <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={data}>
+          <AreaChart data={ventData}>
             <defs>
               <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#7F71CA" stopOpacity={0.4} />
@@ -56,30 +88,27 @@ const Graph = () => {
               </linearGradient>
             </defs>
 
-            <Area type="monotoneX" dataKey="value" stroke="#7F71CA" fill="url(#color)" />
+            <Area type="monotoneX" dataKey="temp" stroke="#7F71CA" fill="url(#color)" />
 
             <XAxis
-              dataKey="date"
+              dataKey="timestamp"
               axisLine={false}
               tickLine={false}
               tickFormatter={(str) => {
-                const date = parseISO(str);
-                if (date.getDate() % 7 === 0) {
-                  return format(date, "MMM, d");
-                }
-                return "";
+                return str;
               }}
             />
 
             <YAxis
-              dataKey="value"
+              dataKey="temp"
               axisLine={false}
               tickLine={false}
               tickCount={6}
-              tickFormatter={(number) => `$${number.toFixed(2)}`}
+              tickFormatter={(number) => number}
             />
 
             <Tooltip content={<CustomTooltip />} />
+            <Tooltip />
 
             <CartesianGrid opacity={0.1} vertical={false} />
           </AreaChart>
@@ -93,8 +122,8 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   if (active) {
     return (
       <div className="tooltip">
-        <h4>{format(parseISO(label), "eeee, d MMM, yyyy")}</h4>
-        <p>{`${label} : ${payload?.[0].value}`}</p>
+        <h4>{label}</h4>
+        <p>{`${parseFloat(payload?.[0].value?.toString() ?? "").toFixed(1)}℃`}</p>
       </div>
     );
   }

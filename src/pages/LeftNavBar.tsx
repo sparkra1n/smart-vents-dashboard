@@ -17,14 +17,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import TimelineIcon from "@mui/icons-material/Timeline";
 
 const LeftNavBar = () => {
-//   const [ventData, setVentData] = useState<IVentData[]>();
-
-//   useEffect(() => {
-//     fetchVentData().then((response) => {
-//       setVentData(response);
-//       console.log(`response`, response);
-//     });
-//   }, []);
 
   const handleLeftNavBarClick = (id: string) => {
     alert(`pressed ${id}`);

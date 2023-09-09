@@ -22,29 +22,6 @@ const themeOptions = createTheme({
   }
 });
 
-const queryString = "a";
-
-// Create a function to make the GET request
-const fetchVentHistory = async (): Promise<any> => {
-  const response = await fetch(
-    `http://smart-vents-api.azurewebsites.net/Thermostat/VentHistory?id=${encodeURIComponent(
-      queryString
-    )}`
-  );
-
-  if (!response.ok) throw new Error(`Request failed with status: ${response.status}`);
-  const data = await response.json();
-  return data;
-};
-
-fetchVentHistory()
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error("Error:", error);
-  });
-
 const App = () => {
   return (
     <ThemeProvider theme={themeOptions}>
