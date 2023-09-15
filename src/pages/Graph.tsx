@@ -3,8 +3,6 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -13,8 +11,6 @@ import {
 } from "recharts";
 
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
-
-import { format, parseISO, subDays } from "date-fns";
 import { Card, CardContent, Typography } from "@mui/material";
 
 interface VentData {
@@ -32,36 +28,38 @@ const fetchVentHistory = async (queryString: string): Promise<any> => {
   return data;
 };
 
+const formatDate = (dateString: string, includeMMDD: boolean = false): string => {
+  const utcDate: Date = new Date(dateString);
+  const targetTimeZone: string = "America/Los_Angeles";
+  const localTime: Date = new Date(utcDate.toLocaleString("en-US", { timeZone: targetTimeZone }));
+
+  if (includeMMDD) {
+    return localTime.toLocaleString("en-US", {
+      timeZone: targetTimeZone,
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+  } else {
+    return localTime.toLocaleString("en-US", {
+      timeZone: targetTimeZone,
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
+  }
+};
+
 const Graph = () => {
   const [ventData, setVentData] = useState<VentData[]>([]);
 
   useEffect(() => {
     fetchVentHistory("a").then((response: VentData[]) => {
-      let ventDatas: VentData[] = [];
-      response.forEach((e: VentData) => {
-        const utcDate: Date = new Date(e.timestamp);
-        const targetTimeZone: string = "America/Los_Angeles";
-        const localTime: Date = new Date(
-          utcDate.toLocaleString("en-US", { timeZone: targetTimeZone })
-        );
-
-        // Format the local time as "MM/dd HH:mm" string
-        ventDatas.push({
-          temp: e.temp,
-          timestamp: localTime.toLocaleString("en-US", {
-            timeZone: targetTimeZone,
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-          })
-        });
-      });
-      setVentData(ventDatas);
+      setVentData(response);
     });
   }, []);
-
-  console.log("final", ventData);
 
   return (
     <>
@@ -95,7 +93,7 @@ const Graph = () => {
               axisLine={false}
               tickLine={false}
               tickFormatter={(str) => {
-                return str;
+                return formatDate(str, false);
               }}
             />
 
@@ -104,12 +102,10 @@ const Graph = () => {
               axisLine={false}
               tickLine={false}
               tickCount={6}
-              tickFormatter={(number) => number}
+              tickFormatter={(number) => `${number}℃`}
             />
 
             <Tooltip content={<CustomTooltip />} />
-            <Tooltip />
-
             <CartesianGrid opacity={0.1} vertical={false} />
           </AreaChart>
         </ResponsiveContainer>
@@ -122,7 +118,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
   if (active) {
     return (
       <div className="tooltip">
-        <h4>{label}</h4>
+        <h4>{formatDate(label, true)}</h4>
         <p>{`${parseFloat(payload?.[0].value?.toString() ?? "").toFixed(1)}℃`}</p>
       </div>
     );
@@ -131,3 +127,4 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 };
 
 export default Graph;
+export type { VentData };
