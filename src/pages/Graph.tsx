@@ -18,6 +18,10 @@ interface VentData {
   temp: number;
 }
 
+interface IGraphProps {
+  ventId: string;
+}
+
 const fetchVentHistory = async (queryString: string): Promise<any> => {
   const response = await fetch(
     `http://smart-vents-api.azurewebsites.net/Thermostat/VentHistory?id=${encodeURIComponent(
@@ -52,11 +56,11 @@ const formatDate = (dateString: string, includeMMDD: boolean = false): string =>
   }
 };
 
-const Graph = () => {
+const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
   const [ventData, setVentData] = useState<VentData[]>([]);
 
   useEffect(() => {
-    fetchVentHistory("a").then((response: VentData[]) => {
+    fetchVentHistory(props.ventId).then((response: VentData[]) => {
       setVentData(response);
     });
   }, []);
@@ -127,4 +131,4 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 };
 
 export default Graph;
-export type { VentData };
+export type { VentData, IGraphProps };

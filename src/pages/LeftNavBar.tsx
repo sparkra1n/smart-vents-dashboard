@@ -15,11 +15,18 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
 import TimelineIcon from "@mui/icons-material/Timeline";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const LeftNavBar = () => {
-
   const handleLeftNavBarClick = (id: string) => {
     alert(`pressed ${id}`);
+  };
+
+  const [title, setTitle] = useState("Dashboard");
+
+  const navigate = useNavigate();
+  const navigateToPath = (path: string) => {
+    navigate(path);
   };
 
   const drawerWidth = 240;
@@ -32,7 +39,7 @@ const LeftNavBar = () => {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Dashboard
+            {title}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -54,7 +61,8 @@ const LeftNavBar = () => {
           <ListItem key={"Dashboard"} disablePadding>
             <ListItemButton
               onClick={() => {
-                handleLeftNavBarClick("Dashboard");
+                navigateToPath("/");
+                setTitle("Dashboard")
               }}
             >
               <ListItemIcon>{<DashboardIcon />}</ListItemIcon>
@@ -64,7 +72,8 @@ const LeftNavBar = () => {
           <ListItem key={"History"} disablePadding>
             <ListItemButton
               onClick={() => {
-                handleLeftNavBarClick("History");
+                navigateToPath("/b");
+                setTitle("History")
               }}
             >
               <ListItemIcon>{<TimelineIcon />}</ListItemIcon>
@@ -77,7 +86,8 @@ const LeftNavBar = () => {
           <ListItem key={"Account"} disablePadding>
             <ListItemButton
               onClick={() => {
-                handleLeftNavBarClick("Account");
+                navigateToPath("/c");
+                setTitle("Account")
               }}
             >
               <ListItemIcon>{<PersonIcon />}</ListItemIcon>
@@ -88,6 +98,7 @@ const LeftNavBar = () => {
             <ListItemButton
               onClick={() => {
                 handleLeftNavBarClick("Settings");
+                setTitle("Settings");
               }}
             >
               <ListItemIcon>{<SettingsIcon />}</ListItemIcon>
@@ -96,6 +107,7 @@ const LeftNavBar = () => {
           </ListItem>
         </List>
       </Drawer>
+      <Outlet />
     </>
   );
 };

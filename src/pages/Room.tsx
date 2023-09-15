@@ -8,6 +8,7 @@ import List from "@mui/material/List";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Card, Box, CardContent, Typography, CardMedia, makeStyles, Theme } from "@mui/material";
+import Graph from "./Graph";
 
 interface IRoomProps {
   imageUrl: string;
@@ -44,6 +45,7 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
           image={props.imageUrl}
           alt="Live from space album cover"
         />
+
         <Box
           sx={{
             display: "flex",
