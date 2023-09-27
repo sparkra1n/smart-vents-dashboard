@@ -11,7 +11,8 @@ import {
 } from "recharts";
 
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
-import { Card, CardContent, Typography, useTheme } from "@mui/material";
+import { Card, CardContent, Theme, Typography, useTheme } from "@mui/material";
+import { themeOptions } from "../App";
 
 interface VentData {
   _isOccupied: boolean;
@@ -59,7 +60,7 @@ const formatDate = (dateString: string, includeMMDD: boolean = false): string =>
 };
 
 const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
-  const theme = useTheme();
+  const theme = themeOptions;
   const [ventData, setVentData] = useState<VentData[]>([]);
 
   useEffect(() => {

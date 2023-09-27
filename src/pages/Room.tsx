@@ -2,11 +2,11 @@ import * as React from "react";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
-import { Card, Box, CardContent, Typography, Modal, useTheme } from "@mui/material";
+import { Card, Box, CardContent, Typography, Modal, useTheme, Theme } from "@mui/material";
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { themeRulesStandardCreator } from "@fluentui/react";
+import { themeOptions } from "../App";
 
 interface IRoomProps {
   imageUrl: string;
@@ -23,16 +23,15 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  // border: "2px solid #000",
   boxShadow: 24,
   p: 4
 };
 
 const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
+  const theme = themeOptions;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const theme = useTheme();
   return (
     <>
       <Card
@@ -53,7 +52,7 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
           }}
           aria-label="Edit"
         >
-          <MoreVertIcon onClick={handleOpen} />
+          <MoreVertIcon onClick={handleOpen} sx={{ color: theme.palette.text.primary }} />
         </IconButton>
 
         <Box
@@ -72,7 +71,12 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
               marginRight: "2em"
             }}
           >
-            <Typography variant="h6" color="text.secondary" component="div">
+            <Typography
+              variant="h6"
+              color="text.secondary"
+              component="div"
+              sx={{ color: theme.palette.text.primary }}
+            >
               {props.name}
             </Typography>
           </CardContent>
@@ -97,7 +101,8 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
                     textAlign: "left",
                     mr: "2em",
                     display: "flex",
-                    alignSelf: "flex-end"
+                    alignSelf: "flex-end",
+                    color: theme.palette.text.primary
                   }}
                 >
                   Standby
@@ -118,7 +123,8 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
                     textAlign: "left",
                     mr: "2em",
                     display: "flex",
-                    alignSelf: "flex-end"
+                    alignSelf: "flex-end",
+                    color: theme.palette.text.primary
                   }}
                 >
                   <strong>{props.temp}&deg;</strong>
@@ -140,10 +146,10 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
                   styles={buildStyles({
                     pathColor: "#7F71CA",
                     trailColor: "#2C2F33",
-                    textColor: "#FFF"
+                    textColor: theme.palette.text.primary
                   })}
                 >
-                  <AccessTimeIcon />
+                  <AccessTimeIcon sx={{ color: theme.palette.text.primary }} />
                 </CircularProgressbarWithChildren>
               </Box>
             </CardContent>
@@ -152,10 +158,7 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
       </Card>
 
       {/* Edit Vent */}
-      <Modal
-        open={open}
-        onClose={handleClose}
-      >
+      <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Typography id="modal-edit" variant="h6" component="h2">
             Edit Vent

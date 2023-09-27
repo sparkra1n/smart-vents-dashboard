@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,11 +16,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import { Outlet, useNavigate } from "react-router-dom";
-import { InputBase, alpha, styled, useTheme } from "@mui/material";
+import { IconButton, InputBase, Theme, alpha, styled, useTheme } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
+import { ThemeProvider } from "@emotion/react";
+import { themeOptions } from "../App";
 
-const NavBar = () => {
-  const theme = useTheme();
+interface NavBarProps {
+  children: ReactNode;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ children }) => {
+  const theme = themeOptions;
   const handleLeftNavBarClick = (id: string) => {
     alert(`pressed ${id}`);
   };
@@ -51,19 +58,9 @@ const NavBar = () => {
   }));
 
   const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    // color: "inherit",
     "& .MuiInputBase-input": {
       padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)})`
-      // transition: theme.transitions.create("width"),
-      // width: "100%",
-      // [theme.breakpoints.up("sm")]: {
-      //   width: "12ch",
-      //   "&:focus": {
-      //     width: "20ch"
-      //   }
-      // }
     }
   }));
 
@@ -74,28 +71,108 @@ const NavBar = () => {
     navigate(path);
   };
 
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
   const drawerWidth = 240;
-  return (
+  const drawer = (
     <>
+      <Toolbar />
+      <Divider sx={{ backgroundColor: theme.palette.divider }} />
+      <List>
+        <ListItem key={"Dashboard"} disablePadding>
+          <ListItemButton
+            onClick={() => {
+              navigateToPath("/");
+              setTitle("Dashboard");
+            }}
+            sx={{ color: theme.palette.text.primary }}
+          >
+            <ListItemIcon>
+              {<DashboardIcon sx={{ color: theme.palette.text.primary }} />}
+            </ListItemIcon>
+            <ListItemText primary={"Dashboard"} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem key={"History"} disablePadding>
+          <ListItemButton
+            onClick={() => {
+              navigateToPath("/history");
+              setTitle("History");
+            }}
+            sx={{ color: theme.palette.text.primary }}
+          >
+            <ListItemIcon>
+              {<TimelineIcon sx={{ color: theme.palette.text.primary }} />}
+            </ListItemIcon>
+            <ListItemText primary={"History"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+      <Divider sx={{ backgroundColor: theme.palette.divider }} />
+      <List>
+        <ListItem key={"Account"} disablePadding>
+          <ListItemButton
+            onClick={() => {
+              navigateToPath("/c");
+              setTitle("Account");
+            }}
+            sx={{ color: theme.palette.text.primary }}
+          >
+            <ListItemIcon>{<PersonIcon sx={{ color: theme.palette.text.primary }} />}</ListItemIcon>
+            <ListItemText primary={"Account"} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem key={"Settings"} disablePadding>
+          <ListItemButton
+            onClick={() => {
+              handleLeftNavBarClick("Settings");
+              setTitle("Settings");
+            }}
+            sx={{ color: theme.palette.text.primary }}
+          >
+            <ListItemIcon>
+              {<SettingsIcon sx={{ color: theme.palette.text.primary }} />}
+            </ListItemIcon>
+            <ListItemText primary={"Settings"} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </>
+  );
+
+  return (
+    <Box sx={{ display: "flex"}}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
           backgroundColor: theme.palette.background.paper,
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` }
         }}
       >
         <Toolbar
           sx={{
-            backgroundColor: theme.palette.background.paper,
-            display: "flex",
-            justifyContent: "space-between"
+            backgroundColor: "#23262A",
+            display: "flex"
+            // justifyContent: "space-between"
           }}
         >
-          <Typography variant="h6" noWrap component="div">
+          <IconButton
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" }, color: "#BDBEC0" }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ color: "#BDBEC0" }}>
             {title}
           </Typography>
+
           <Search theme={theme}>
             <SearchIconWrapper>
               <SearchIcon />
@@ -108,73 +185,63 @@ const NavBar = () => {
           </Search>
         </Toolbar>
       </AppBar>
-      <Drawer
+      <Box
+        component="nav"
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box"
-          }
+          width: { sm: drawerWidth },
+          flexShrink: { sm: 0 },
         }}
-        variant="permanent"
-        anchor="left"
+        aria-label="folders"
+      >
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: "block", sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+              backgroundColor: theme.palette.background.paper,
+              borderRight: 1,
+              borderColor: theme.palette.divider
+            }
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+              backgroundColor: theme.palette.background.paper,
+              color: "#BDBEC0",
+              borderRight: 1,
+              borderColor: theme.palette.divider
+            }
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        <Divider />
-        <List>
-          <ListItem key={"Dashboard"} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigateToPath("/");
-                setTitle("Dashboard");
-              }}
-            >
-              <ListItemIcon>{<DashboardIcon />}</ListItemIcon>
-              <ListItemText primary={"Dashboard"} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={"History"} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigateToPath("/history");
-                setTitle("History");
-              }}
-            >
-              <ListItemIcon>{<TimelineIcon />}</ListItemIcon>
-              <ListItemText primary={"History"} />
-            </ListItemButton>
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem key={"Account"} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                navigateToPath("/c");
-                setTitle("Account");
-              }}
-            >
-              <ListItemIcon>{<PersonIcon />}</ListItemIcon>
-              <ListItemText primary={"Account"} />
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={"Settings"} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                handleLeftNavBarClick("Settings");
-                setTitle("Settings");
-              }}
-            >
-              <ListItemIcon>{<SettingsIcon />}</ListItemIcon>
-              <ListItemText primary={"Settings"} />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Drawer>
+        {children}
+      </Box>
       <Outlet />
-    </>
+    </Box>
   );
+  //FIXME: Use exported theme and fix borders
 };
 
 export default NavBar;

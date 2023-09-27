@@ -20,59 +20,27 @@ const themeOptions = createTheme({
     background: {
       default: "#171A1F",
       paper: "#23262A"
-    }
+    },
+    text: {
+      primary: "#BDBEC0"
+    },
+    divider: "#33363A"
   }
 });
 
 const App = () => {
   return (
     <BrowserRouter>
-      <ThemeProvider theme={themeOptions}>
-        <Box sx={{ display: "flex" }}>
-          <Routes>
-            <Route path="/" element={<NavBar />}>
-              <Route
-                index
-                element={
-                  <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <RoomGrid />
-                  </Box>
-                }
-              />
-              <Route
-                path="history"
-                element={
-                  <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <Graph ventId="c" color="#7F71CA" />
-                  </Box>
-                }
-              />
-              <Route
-                path="c"
-                element={
-                  <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <h1>c</h1>
-                  </Box>
-                }
-              />
-              <Route
-                path="*"
-                element={
-                  <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-                    <Toolbar />
-                    <h1>404</h1>
-                  </Box>
-                }
-              />
-            </Route>
-          </Routes>
-        </Box>
-      </ThemeProvider>
+      <NavBar>
+        <Routes>
+          <Route path="/" element={<></>} />
+          <Route index element={<RoomGrid />} />
+          <Route path="history" element={<Graph ventId="c" color="#7F71CA" />} />
+        </Routes>
+      </NavBar>
     </BrowserRouter>
   );
 };
 
 export default App;
+export { themeOptions };
