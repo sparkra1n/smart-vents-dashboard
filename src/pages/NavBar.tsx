@@ -16,11 +16,56 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import { Outlet, useNavigate } from "react-router-dom";
+import { InputBase, alpha, styled, useTheme } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 
-const LeftNavBar = () => {
+const NavBar = () => {
+  const theme = useTheme();
   const handleLeftNavBarClick = (id: string) => {
     alert(`pressed ${id}`);
   };
+
+  const Search = styled("div")(({ theme }) => ({
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.default,
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.common.white, 0.05)
+    },
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto"
+    }
+  }));
+
+  const SearchIconWrapper = styled("div")(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  }));
+
+  const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    // color: "inherit",
+    "& .MuiInputBase-input": {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)})`
+      // transition: theme.transitions.create("width"),
+      // width: "100%",
+      // [theme.breakpoints.up("sm")]: {
+      //   width: "12ch",
+      //   "&:focus": {
+      //     width: "20ch"
+      //   }
+      // }
+    }
+  }));
 
   const [title, setTitle] = useState("Dashboard");
 
@@ -35,12 +80,32 @@ const LeftNavBar = () => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+        sx={{
+          backgroundColor: theme.palette.background.paper,
+          width: `calc(100% - ${drawerWidth}px)`,
+          ml: `${drawerWidth}px`
+        }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
           <Typography variant="h6" noWrap component="div">
             {title}
           </Typography>
+          <Search theme={theme}>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ "aria-label": "search" }}
+              sx={{ marginLeft: theme.spacing(1), flex: 1 }}
+            />
+          </Search>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -62,7 +127,7 @@ const LeftNavBar = () => {
             <ListItemButton
               onClick={() => {
                 navigateToPath("/");
-                setTitle("Dashboard")
+                setTitle("Dashboard");
               }}
             >
               <ListItemIcon>{<DashboardIcon />}</ListItemIcon>
@@ -72,8 +137,8 @@ const LeftNavBar = () => {
           <ListItem key={"History"} disablePadding>
             <ListItemButton
               onClick={() => {
-                navigateToPath("/b");
-                setTitle("History")
+                navigateToPath("/history");
+                setTitle("History");
               }}
             >
               <ListItemIcon>{<TimelineIcon />}</ListItemIcon>
@@ -87,7 +152,7 @@ const LeftNavBar = () => {
             <ListItemButton
               onClick={() => {
                 navigateToPath("/c");
-                setTitle("Account")
+                setTitle("Account");
               }}
             >
               <ListItemIcon>{<PersonIcon />}</ListItemIcon>
@@ -112,4 +177,4 @@ const LeftNavBar = () => {
   );
 };
 
-export default LeftNavBar;
+export default NavBar;

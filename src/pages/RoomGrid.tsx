@@ -7,9 +7,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
 
 interface VentSummary {
-  Id: string;
-  Temp: number;
-  IsOccupied: boolean;
+  _id: string;
+  _temp: number;
+  _targetTemp: number;
+  _isOccupied: boolean;
 }
 
 const fetchVentSummaries = async (): Promise<any> => {
@@ -40,16 +41,17 @@ const RoomGrid = () => {
           return (
             <span key={index}>
               <Room
-                name={vent.Id}
-                isOccupied={vent.IsOccupied}
+                name={vent._id}
+                isOccupied={vent._isOccupied}
                 imageUrl="https://mui.com/static/images/cards/live-from-space.jpg"
-                temp={vent.Temp}
+                temp={vent._temp}
+                targetTemp={vent._targetTemp}
               />
             </span>
           );
         })}
 
-        <span>
+        {/* <span>
           <Card
             sx={{
               display: "flex",
@@ -65,7 +67,7 @@ const RoomGrid = () => {
               </IconButton>
             </div>
           </Card>
-        </span>
+        </span> */}
       </Stack>
     </>
   );

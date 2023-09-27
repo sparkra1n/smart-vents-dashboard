@@ -1,7 +1,7 @@
 import { createTheme, useTheme, ThemeProvider, ThemeOptions } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import LeftNavBar from "./pages/LeftNavBar";
+import NavBar from "./pages/NavBar";
 import Dashboard from "./pages/Dashboard";
 import RoomGrid from "./pages/RoomGrid";
 import Graph from "./pages/Graph";
@@ -15,32 +15,22 @@ const themeOptions = createTheme({
       main: "#7F71CA"
     },
     secondary: {
-      main: "#CA373E"
+      main: "#d371bf"
     },
     background: {
       default: "#171A1F",
-      paper: "#171A1F"
+      paper: "#23262A"
     }
   }
 });
 
-const History = () => <Graph ventId="c" />;
-
 const App = () => {
   return (
     <BrowserRouter>
-      {/* <ThemeProvider theme={themeOptions}>
-        <Box sx={{ display: "flex" }}>
-        <LeftNavBar />
-        <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
-        </Box>
-        </Box>
-      </ThemeProvider> */}
-
       <ThemeProvider theme={themeOptions}>
         <Box sx={{ display: "flex" }}>
           <Routes>
-            <Route path="/" element={<LeftNavBar />}>
+            <Route path="/" element={<NavBar />}>
               <Route
                 index
                 element={
@@ -51,11 +41,11 @@ const App = () => {
                 }
               />
               <Route
-                path="b"
+                path="history"
                 element={
                   <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}>
                     <Toolbar />
-                    <h1>b</h1>
+                    <Graph ventId="c" color="#7F71CA" />
                   </Box>
                 }
               />
@@ -82,42 +72,6 @@ const App = () => {
         </Box>
       </ThemeProvider>
     </BrowserRouter>
-  );
-};
-
-// const NoPage = () => {
-//   return <h1>404</h1>;
-// };
-// const Contact = () => {
-//   return <h1>Contact Me</h1>;
-// };
-// const Blogs = () => {
-//   return <h1>Blog Articles</h1>;
-// };
-
-// const Home = () => {
-//   return <h1>Home</h1>;
-// };
-
-const Layout = () => {
-  return (
-    <>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/b">Blogs</Link>
-          </li>
-          <li>
-            <Link to="/c">Contact</Link>
-          </li>
-        </ul>
-      </nav>
-
-      <Outlet />
-    </>
   );
 };
 

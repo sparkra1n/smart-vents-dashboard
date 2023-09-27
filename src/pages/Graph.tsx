@@ -11,15 +11,17 @@ import {
 } from "recharts";
 
 import { ValueType, NameType } from "recharts/types/component/DefaultTooltipContent";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, useTheme } from "@mui/material";
 
 interface VentData {
-  timestamp: string;
-  temp: number;
+  _isOccupied: boolean;
+  _temp: number;
+  _timestamp: string;
 }
 
 interface IGraphProps {
   ventId: string;
+  color: string;
 }
 
 const fetchVentHistory = async (queryString: string): Promise<any> => {
@@ -57,11 +59,13 @@ const formatDate = (dateString: string, includeMMDD: boolean = false): string =>
 };
 
 const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
+  const theme = useTheme();
   const [ventData, setVentData] = useState<VentData[]>([]);
 
   useEffect(() => {
     fetchVentHistory(props.ventId).then((response: VentData[]) => {
       setVentData(response);
+      console.log(response);
     });
   }, []);
 
@@ -73,27 +77,28 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
           flexDirection: "column",
           width: "100%",
           height: "auto",
-          marginTop: "30px"
+          marginTop: "30px",
+          backgroundColor: theme.palette.background.default
         }}
       >
-        <CardContent sx={{ flex: "1 0 auto" }}>
+        {/* <CardContent sx={{ flex: "1 0 auto", backgroundColor: theme.palette.background.paper }}>
           <Typography variant="h6" color="text.secondary" component="div">
-            History
+            {props.ventId}
           </Typography>
-        </CardContent>
+        </CardContent> */}
         <ResponsiveContainer width="100%" height={400}>
           <AreaChart data={ventData}>
             <defs>
               <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7F71CA" stopOpacity={0.4} />
-                <stop offset="75%" stopColor="#7F71CA" stopOpacity={0.05} />
+                <stop offset="0%" stopColor={props.color} stopOpacity={0.4} />
+                <stop offset="75%" stopColor={props.color} stopOpacity={0.05} />
               </linearGradient>
             </defs>
 
-            <Area type="monotoneX" dataKey="temp" stroke="#7F71CA" fill="url(#color)" />
+            <Area type="monotoneX" dataKey="_temp" stroke={props.color} fill="url(#color)" />
 
             <XAxis
-              dataKey="timestamp"
+              dataKey="_timestamp"
               axisLine={false}
               tickLine={false}
               tickFormatter={(str) => {
@@ -102,7 +107,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
             />
 
             <YAxis
-              dataKey="temp"
+              dataKey="_temp"
               axisLine={false}
               tickLine={false}
               tickCount={6}
