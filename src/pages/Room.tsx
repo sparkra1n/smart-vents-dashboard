@@ -1,12 +1,22 @@
-import * as React from "react";
+// React
+import React from "react";
+
+// Material-UI Core
+import { Box, Card, CardContent, Modal, Typography, useTheme } from "@mui/material";
+
+// Material-UI Icons
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
-import { Card, Box, CardContent, Typography, Modal, useTheme, Theme } from "@mui/material";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+
+// React Circular Progressbar
 import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+
+// Custom Theme Options
 import { themeOptions } from "../App";
+
 
 interface IRoomProps {
   imageUrl: string;
@@ -51,8 +61,9 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
             zIndex: 1
           }}
           aria-label="Edit"
+          onClick={handleOpen}
         >
-          <MoreVertIcon onClick={handleOpen} sx={{ color: theme.palette.text.primary }} />
+          <MoreVertIcon sx={{ color: theme.palette.text.primary }} />
         </IconButton>
 
         <Box

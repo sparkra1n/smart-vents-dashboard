@@ -59,8 +59,9 @@ const formatDate = (dateString: string, includeMMDD: boolean = false): string =>
   }
 };
 
+const theme = themeOptions;
+
 const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
-  const theme = themeOptions;
   const [ventData, setVentData] = useState<VentData[]>([]);
 
   useEffect(() => {
@@ -82,43 +83,48 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
           backgroundColor: theme.palette.background.default
         }}
       >
-        {/* <CardContent sx={{ flex: "1 0 auto", backgroundColor: theme.palette.background.paper }}>
+        <CardContent sx={{ flex: "1 0 auto", backgroundColor: theme.palette.background.paper }}>
           <Typography variant="h6" color="text.secondary" component="div">
             {props.ventId}
           </Typography>
-        </CardContent> */}
-        <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={ventData}>
-            <defs>
-              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={props.color} stopOpacity={0.4} />
-                <stop offset="75%" stopColor={props.color} stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
+          <ResponsiveContainer width="100%" height={400}>
+            <AreaChart data={ventData}>
+              <defs>
+                <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={props.color} stopOpacity={0.4} />
+                  <stop offset="75%" stopColor={props.color} stopOpacity={0.05} />
+                </linearGradient>
+              </defs>
 
-            <Area type="monotoneX" dataKey="_temp" stroke={props.color} fill="url(#color)" />
+              <Area type="monotoneX" dataKey="_temp" stroke={props.color} fill="url(#color)" />
 
-            <XAxis
-              dataKey="_timestamp"
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(str) => {
-                return formatDate(str, false);
-              }}
-            />
+              <XAxis
+                dataKey="_timestamp"
+                axisLine={false}
+                tickLine={false}
+                color={theme.palette.text.primary}
+                tickFormatter={(str) => {
+                  return formatDate(str, false);
+                }}
+              />
 
-            <YAxis
-              dataKey="_temp"
-              axisLine={false}
-              tickLine={false}
-              tickCount={6}
-              tickFormatter={(number) => `${number}℃`}
-            />
+              <YAxis
+                dataKey="_temp"
+                axisLine={false}
+                tickLine={false}
+                tickCount={6}
+                tickFormatter={(number) => `${number}℃`}
+                color={theme.palette.text.primary}
+              />
 
-            <Tooltip content={<CustomTooltip />} />
-            <CartesianGrid opacity={0.1} vertical={false} />
-          </AreaChart>
-        </ResponsiveContainer>
+              <Tooltip
+                content={<CustomTooltip />}
+                labelStyle={{ color: theme.palette.text.primary }}
+              />
+              <CartesianGrid opacity={0.1} vertical={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
       </Card>
     </>
   );
@@ -127,7 +133,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active) {
     return (
-      <div className="tooltip">
+      <div className="tooltip" style={{ color: theme.palette.text.primary }}>
         <h4>{formatDate(label, true)}</h4>
         <p>{`${parseFloat(payload?.[0].value?.toString() ?? "").toFixed(1)}℃`}</p>
       </div>
