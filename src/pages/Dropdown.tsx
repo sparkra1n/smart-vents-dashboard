@@ -29,7 +29,7 @@ const StyledMenu = (props: MenuProps) => (
 interface IDropdownProps {
   name: string;
   children: React.ReactNode;
-  sx?: any; // Define the sx prop
+  sx?: any;
 }
 
 const Dropdown: React.FC<IDropdownProps> = (props) => {
@@ -74,23 +74,3 @@ const Dropdown: React.FC<IDropdownProps> = (props) => {
 };
 
 export default Dropdown;
-
-{
-  /* <MenuItem onClick={handleClose} disableRipple>
-  <EditIcon />
-  Edit
-</MenuItem>
-<MenuItem onClick={handleClose} disableRipple>
-  <FileCopyIcon />
-  Duplicate
-</MenuItem>
-<Divider sx={{ my: 0.5 }} />
-<MenuItem onClick={handleClose} disableRipple>
-  <ArchiveIcon />
-  Archive
-</MenuItem>
-<MenuItem onClick={handleClose} disableRipple>
-  <MoreHorizIcon />
-  More
-</MenuItem> */
-}

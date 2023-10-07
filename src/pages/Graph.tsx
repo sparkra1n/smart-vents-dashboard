@@ -3,6 +3,8 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Line,
+  LineChart,
   ResponsiveContainer,
   Tooltip,
   TooltipProps,
@@ -15,14 +17,15 @@ import { Card, CardContent, Theme, Typography, useTheme } from "@mui/material";
 import { themeOptions } from "../App";
 
 interface VentData {
-  _isOccupied: boolean;
-  _temp: number;
-  _timestamp: string;
+  isOccupied: boolean;
+  temp: number;
+  timestamp: string;
 }
 
 interface IGraphProps {
   ventId: string;
   color: string;
+  mini?: boolean;
 }
 
 const fetchVentHistory = async (queryString: string): Promise<any> => {
@@ -59,10 +62,11 @@ const formatDate = (dateString: string, includeMMDD: boolean = false): string =>
   }
 };
 
-const theme = themeOptions;
-
 const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
+  const height = 400;
+
   const [ventData, setVentData] = useState<VentData[]>([]);
+  const theme = themeOptions;
 
   useEffect(() => {
     fetchVentHistory(props.ventId).then((response: VentData[]) => {
@@ -70,6 +74,21 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
       console.log(response);
     });
   }, []);
+
+  if (props.mini ?? false) {
+    const data = [
+      { month: "Jan", value: 10 },
+      { month: "Feb", value: 15 },
+      { month: "Mar", value: 20 }
+    ];
+    return (
+      <div style={{ width: "70px", height: "70px" }}>
+        <LineChart width={70} height={70} data={data}>
+          <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+        </LineChart>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -87,7 +106,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
           <Typography variant="h6" color="text.secondary" component="div">
             {props.ventId}
           </Typography>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={height}>
             <AreaChart data={ventData}>
               <defs>
                 <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
@@ -96,10 +115,10 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
                 </linearGradient>
               </defs>
 
-              <Area type="monotoneX" dataKey="_temp" stroke={props.color} fill="url(#color)" />
+              <Area type="monotoneX" dataKey="temp" stroke={props.color} fill="url(#color)" />
 
               <XAxis
-                dataKey="_timestamp"
+                dataKey="timestamp"
                 axisLine={false}
                 tickLine={false}
                 color={theme.palette.text.primary}
@@ -109,7 +128,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
               />
 
               <YAxis
-                dataKey="_temp"
+                dataKey="temp"
                 axisLine={false}
                 tickLine={false}
                 tickCount={6}
@@ -133,7 +152,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active) {
     return (
-      <div className="tooltip" style={{ color: theme.palette.text.primary }}>
+      <div className="tooltip" style={{ color: "#BDBEC0" }}>
         <h4>{formatDate(label, true)}</h4>
         <p>{`${parseFloat(payload?.[0].value?.toString() ?? "").toFixed(1)}℃`}</p>
       </div>
@@ -144,3 +163,4 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 
 export default Graph;
 export type { VentData, IGraphProps };
+export { fetchVentHistory };

@@ -1,21 +1,17 @@
-import * as React from "react";
-import Room, { IRoomProps } from "./Room";
-import { DefaultPalette, Slider, Stack, IStackStyles, IStackTokens } from "@fluentui/react";
-import Card from "@mui/material/Card";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
+import Room from "./Room";
+import { Stack } from "@fluentui/react";
 import { useEffect, useState } from "react";
-import { themeOptions } from "../App";
+import Popup from "./Popup";
 
 interface VentSummary {
-  _id: string;
-  _temp: number;
-  _targetTemp: number;
-  _isOccupied: boolean;
+  id: string;
+  temp: number;
+  targetTemp: number;
+  isOccupied: boolean;
 }
 
 const fetchVentSummaries = async (): Promise<any> => {
-  const response = await fetch("http://smart-vents-api.azurewebsites.net/Thermostat/VentSummaries");
+  const response = await fetch("http://smart-vents-api.azurewebsites.net/Thermostat/ventSummaries");
   if (!response.ok) {
     throw new Error(`Request failed with status: ${response.status}`);
   }
@@ -42,11 +38,10 @@ const RoomGrid = () => {
           return (
             <span key={index}>
               <Room
-                name={vent._id}
-                isOccupied={vent._isOccupied}
-                imageUrl="https://mui.com/static/images/cards/live-from-space.jpg"
-                temp={vent._temp}
-                targetTemp={vent._targetTemp}
+                name={vent.id}
+                isOccupied={vent.isOccupied}
+                temp={vent.temp}
+                targetTemp={vent.targetTemp}
               />
             </span>
           );
@@ -70,6 +65,7 @@ const RoomGrid = () => {
           </Card>
         </span> */}
       </Stack>
+      <Popup />
     </>
   );
 };
