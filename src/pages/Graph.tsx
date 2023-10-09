@@ -76,15 +76,11 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
   }, []);
 
   if (props.mini ?? false) {
-    const data = [
-      { month: "Jan", value: 10 },
-      { month: "Feb", value: 15 },
-      { month: "Mar", value: 20 }
-    ];
+
     return (
       <div style={{ width: "70px", height: "70px" }}>
-        <LineChart width={70} height={70} data={data}>
-          <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+        <LineChart width={70} height={70} data={ventData}>
+          <Line type="monotone" dataKey="temp" stroke={props.color} strokeWidth={2} dot={false}/>
         </LineChart>
       </div>
     );

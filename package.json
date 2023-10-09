@@ -6,10 +6,9 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fluentui/react": "^8.111.1",
-    "@jsdev63/advanced_react-circular-slider": "^2.4.5",
     "@mui/icons-material": "^5.14.6",
     "@mui/lab": "^5.0.0-alpha.137",
-    "@mui/material": "^5.14.1",
+    "@mui/material": "^5.14.12",
     "@mui/x-charts": "^6.0.0-alpha.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -18,13 +17,12 @@
     "@types/node": "^16.18.37",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
-    "advanced-react-circular-slider": "^1.6.4",
     "d3": "^7.8.5",
     "date-fns": "^2.30.0",
     "react": "^18.2.0",
     "react-card-flip": "^1.2.0",
     "react-circular-progressbar": "^2.1.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
     "recharts": "^2.7.3",
@@ -32,7 +30,6 @@
     "web-vitals": "^2.1.4"
   },
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
   },
   "scripts": {
