@@ -45,7 +45,7 @@ const Room: React.FunctionComponent<IRoomProps> = (props: IRoomProps) => {
     }
 
     return (
-      <Graph ventId="a" color="#7F71CA" mini={true} />
+      <></>
     );
   };
 

@@ -34,8 +34,16 @@ const App = () => {
       <NavBar>
         <Routes>
           <Route path="/" element={<></>} />
-          <Route index element={<RoomGrid />} />
-          <Route path="history" element={<Graph ventId="a" color="#7F71CA" />} />
+          <Route
+            index
+            element={
+              <>
+                <RoomGrid /> 
+                {/* <MainGraph /> */}
+              </>
+            }
+          />
+          <Route path="history" element={<Graph ventId="Bedroom" color="#7F71CA" />} />
         </Routes>
       </NavBar>
     </BrowserRouter>
