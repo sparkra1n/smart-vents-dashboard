@@ -33,6 +33,11 @@ interface IGraphProps {
   color: string;
 }
 
+interface IMainGraphData {
+  timestamps: string[];
+  temps: number[][];
+}
+
 const formatDate = (dateString: string, includeMMDD: boolean = false): string => {
   const utcDate: Date = new Date(dateString);
   const targetTimeZone: string = "America/Los_Angeles";
@@ -61,7 +66,6 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
   const theme = themeOptions;
   const height = 400;
   const [ventData, setVentData] = useState<IVentData[]>([]);
-  const [ventTemperatures, setVentTemperatures] = useState<number[][]>([]);
 
   useEffect(() => {
     fetchVentHistory(props.ventId).then((response: IVentData[]) => {
@@ -139,7 +143,7 @@ const MainGraph = () => {
   const height = 400;
   const theme = themeOptions;
   const [vents, setVents] = useState<IVent[]>([]);
-  const [temps, setTemps] = useState<number[][]>([]);
+  const [graphData, setGraphData] = useState<IMainGraphData>();
 
   useEffect(() => {
     fetchVentHistories().then((response: IVent[]) => {
@@ -147,15 +151,11 @@ const MainGraph = () => {
     });
   }, []);
 
-  console.log("vents", vents);
-
   useEffect(() => {
     // Extract unique timestamps and sort them in chronological order
     const uniqueSortedTimestamps = Array.from(
       new Set(vents.flatMap((vent) => vent.history.map((data) => data.timestamp)))
     ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-    console.log("start", uniqueSortedTimestamps);
 
     // Create a new array with IVentData arrays adjusted to uniqueSortedTimestamps
     const adjustedVents: IVent[] = vents.map((vent) => {
@@ -198,15 +198,51 @@ const MainGraph = () => {
         history: adjustedHistory
       };
     });
-    console.log("adjusted vents", adjustedVents);
 
-    const tempArray: number[][] = adjustedVents.map((vent) =>
-      vent.history.map((data) => data.temp)
-    );
-    setTemps(tempArray);
+    setGraphData({
+      temps: adjustedVents.map((vent) => vent.history.map((data) => data.temp)),
+      timestamps: uniqueSortedTimestamps
+    });
   }, [vents]);
 
-  return <></>;
+  console.log(graphData);
+  return (
+    // <ResponsiveContainer width="100%" height={height}>
+    //   <AreaChart data={ventData}>
+    //     <Line
+    //       type="monotone"
+    //       dataKey="temp"
+    //       stroke={props.color}
+    //       dot={{ fill: "white", strokeWidth: 2, stroke: "white" }}
+    //     />
+
+    //     <XAxis
+    //       dataKey="timestamp"
+    //       axisLine={false}
+    //       tickLine={false}
+    //       color={theme.palette.text.primary}
+    //       tick={{
+    //         textAnchor: "start"
+    //       }}
+    //       tickFormatter={(value, index) => {
+    //         return formatDate(value, false);
+    //       }}
+    //     />
+    //     <YAxis
+    //       dataKey="temp"
+    //       axisLine={false}
+    //       tickLine={false}
+    //       domain={[15, 30]} // Set the desired Y-axis range
+    //       tickCount={6}
+    //       tickFormatter={(number) => `${number}℃`}
+    //       color={theme.palette.text.primary}
+    //     />
+    //     <Tooltip content={<CustomTooltip />} labelStyle={{ color: theme.palette.text.primary }} />
+    //     <CartesianGrid opacity={0.1} vertical={false} />
+    //   </AreaChart>
+    // </ResponsiveContainer>
+    <></>
+  );
 };
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
