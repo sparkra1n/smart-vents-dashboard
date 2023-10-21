@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import NavBar from "./pages/NavBar";
 import Dashboard from "./pages/Dashboard";
 import RoomGrid from "./pages/RoomGrid";
-import Graph from "./pages/Graph";
+import Graph, { MainGraph } from "./pages/Graph";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Link, Outlet, Route, Router, Routes, useNavigate } from "react-router-dom";
 
@@ -39,7 +39,7 @@ const App = () => {
             element={
               <>
                 <RoomGrid /> 
-                {/* <MainGraph /> */}
+                <MainGraph />
               </>
             }
           />

@@ -65,7 +65,7 @@ const RoomGrid = () => {
           </Card>
         </span> */}
       </Stack>
-      <Popup />
+      {/* <Popup /> */}
     </>
   );
 };

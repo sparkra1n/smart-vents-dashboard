@@ -8,11 +8,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { themeOptions } from "../App";
 import { Card, CardContent, TextField } from "@mui/material";
 
-// interface IPopupProps {
-//   children: React.ReactNode;
-// }
-// const Popup: React.FC<IPopupProps> = ({ children }) => {
-
 const Popup = () => {
   const theme = themeOptions;
   const [open, setOpen] = useState(false);
@@ -72,8 +67,8 @@ const Popup = () => {
               sx={{
                 color: theme.palette.text.primary,
                 display: "flex",
-                alignItems: "center", // Vertically align content
-                justifyContent: "space-between" // Add space between text and icon
+                alignItems: "center",
+                justifyContent: "space-between"
               }}
             >
               Add Vent
@@ -82,7 +77,7 @@ const Popup = () => {
                 aria-label="close"
                 sx={{
                   color: theme.palette.text.primary,
-                  marginLeft: 1 // Add some spacing between text and icon
+                  marginLeft: 1
                 }}
               >
                 <CloseIcon sx={{ color: theme.palette.text.primary }} />

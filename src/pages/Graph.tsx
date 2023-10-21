@@ -3,6 +3,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Label,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -31,11 +32,6 @@ interface IVent {
 interface IGraphProps {
   ventId: string;
   color: string;
-}
-
-interface IMainGraphData {
-  timestamps: string[];
-  temps: number[][];
 }
 
 const formatDate = (dateString: string, includeMMDD: boolean = false): string => {
@@ -74,8 +70,6 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
     });
   }, []);
 
-  MainGraph();
-
   return (
     <Card
       sx={{
@@ -104,7 +98,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
               dataKey="temp"
               stroke={props.color}
               fill="url(#color)"
-              dot={{ fill: "white", strokeWidth: 2, stroke: "white" }}
+              dot={false}
             />
             <XAxis
               dataKey="timestamp"
@@ -122,7 +116,7 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
               dataKey="temp"
               axisLine={false}
               tickLine={false}
-              domain={[15, 30]} // Set the desired Y-axis range
+              domain={[15, 30]}
               tickCount={6}
               tickFormatter={(number) => `${number}℃`}
               color={theme.palette.text.primary}
@@ -139,28 +133,40 @@ const Graph: React.FunctionComponent<IGraphProps> = (props: IGraphProps) => {
   );
 };
 
+const Lines = (graphData: { timestamp: string }[]) => {
+  if (graphData.length === 0) return;
+
+  const keys: string[] = Object.keys(graphData[0]);
+  keys.shift();
+  console.log(keys);
+  return keys.map((key) => (
+    <Area type="monotoneX" dataKey={key} stroke={"#7F71CA"} fill="url(#color)" dot={false} />
+  ));
+};
+
 const MainGraph = () => {
   const height = 400;
   const theme = themeOptions;
   const [vents, setVents] = useState<IVent[]>([]);
-  const [graphData, setGraphData] = useState<IMainGraphData>();
+  const [mainGraphData, setMainGraphData] = useState<{ timestamp: string }[]>();
 
   useEffect(() => {
-    fetchVentHistories().then((response: IVent[]) => {
+    (async () => {
+      const response = await fetchVentHistories();
       setVents(response);
-    });
+    })();
   }, []);
 
   useEffect(() => {
-    // Extract unique timestamps and sort them in chronological order
+    if (vents.length === 0) return;
+
     const uniqueSortedTimestamps = Array.from(
       new Set(vents.flatMap((vent) => vent.history.map((data) => data.timestamp)))
     ).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    // Create a new array with IVentData arrays adjusted to uniqueSortedTimestamps
     const adjustedVents: IVent[] = vents.map((vent) => {
       const adjustedHistory: IVentData[] = [];
-      let lastData: IVentData | undefined;
+      let lastData: IVentData | undefined = undefined;
 
       for (const timestamp of uniqueSortedTimestamps) {
         const existingData = vent.history.find((data) => data.timestamp === timestamp);
@@ -170,14 +176,12 @@ const MainGraph = () => {
           lastData = existingData;
         } else {
           if (lastData) {
-            // If there's a missing timestamp, use the last available data
             adjustedHistory.push({
               timestamp,
               temp: lastData.temp,
               isOccupied: lastData.isOccupied
             });
           } else {
-            // If there's a missing timestamp at the beginning, use the next available data
             const nextData = vent.history.find(
               (data) => new Date(data.timestamp).getTime() > new Date(timestamp).getTime()
             );
@@ -199,49 +203,73 @@ const MainGraph = () => {
       };
     });
 
-    setGraphData({
-      temps: adjustedVents.map((vent) => vent.history.map((data) => data.temp)),
-      timestamps: uniqueSortedTimestamps
+    const graphData = uniqueSortedTimestamps.map((timestamp, index) => {
+      const temperatures: { [key: string]: number } = {};
+
+      adjustedVents.forEach((vent) => {
+        temperatures[vent.id] = vent.history[index].temp;
+      });
+
+      return { timestamp, ...temperatures };
     });
+
+    setMainGraphData(graphData);
   }, [vents]);
 
-  console.log(graphData);
   return (
-    // <ResponsiveContainer width="100%" height={height}>
-    //   <AreaChart data={ventData}>
-    //     <Line
-    //       type="monotone"
-    //       dataKey="temp"
-    //       stroke={props.color}
-    //       dot={{ fill: "white", strokeWidth: 2, stroke: "white" }}
-    //     />
+    <Card
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "auto",
+        marginTop: "30px",
+        backgroundColor: theme.palette.background.default
+      }}
+    >
+      <CardContent sx={{ flex: "1 0 auto", backgroundColor: theme.palette.background.paper }}>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          component="div"
+          sx={{ color: theme.palette.text.primary }}
+        >
+          History
+        </Typography>
+        <ResponsiveContainer width="100%" height={height}>
+          <AreaChart data={mainGraphData}>
+            <defs>
+              <linearGradient id="color" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#7F71CA" stopOpacity={0.4} />
+                <stop offset="75%" stopColor="#7F71CA" stopOpacity={0.05} />
+              </linearGradient>
+            </defs>
 
-    //     <XAxis
-    //       dataKey="timestamp"
-    //       axisLine={false}
-    //       tickLine={false}
-    //       color={theme.palette.text.primary}
-    //       tick={{
-    //         textAnchor: "start"
-    //       }}
-    //       tickFormatter={(value, index) => {
-    //         return formatDate(value, false);
-    //       }}
-    //     />
-    //     <YAxis
-    //       dataKey="temp"
-    //       axisLine={false}
-    //       tickLine={false}
-    //       domain={[15, 30]} // Set the desired Y-axis range
-    //       tickCount={6}
-    //       tickFormatter={(number) => `${number}℃`}
-    //       color={theme.palette.text.primary}
-    //     />
-    //     <Tooltip content={<CustomTooltip />} labelStyle={{ color: theme.palette.text.primary }} />
-    //     <CartesianGrid opacity={0.1} vertical={false} />
-    //   </AreaChart>
-    // </ResponsiveContainer>
-    <></>
+            <XAxis
+              dataKey="timestamp"
+              axisLine={false}
+              tickLine={false}
+              color={theme.palette.text.primary}
+              tick={{
+                textAnchor: "start"
+              }}
+              tickFormatter={(value, index) => {
+                return formatDate(value, false);
+              }}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              domain={[15, 30]}
+              tickCount={6}
+              color={theme.palette.text.primary}
+            />
+            <CartesianGrid opacity={0.1} vertical={false} />
+            {Lines(mainGraphData ?? [])}
+          </AreaChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -275,4 +303,4 @@ const fetchVentHistories = async (): Promise<any> => {
 
 export default Graph;
 export type { IVentData as VentData, IGraphProps };
-export { fetchVentHistory };
+export { fetchVentHistory, MainGraph };
