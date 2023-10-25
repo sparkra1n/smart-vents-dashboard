@@ -12,10 +12,10 @@ const themeOptions = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#7F71CA"
+      main: "#7F71CA",
     },
     secondary: {
-      main: "#d371bf"
+      main: "#72A0CB"
     },
     background: {
       default: "#171A1F",
@@ -38,7 +38,7 @@ const App = () => {
             index
             element={
               <>
-                <RoomGrid /> 
+                <RoomGrid />
                 <MainGraph />
               </>
             }
